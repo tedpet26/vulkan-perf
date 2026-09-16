@@ -28,26 +28,15 @@
 	},
 	"breaks": {
 		"lithium": "*",
-		"c2me": "*",
 		"sodium-extra": "*",
-		"immediatelyfast": "*",
 		"entityculling": "*",
-		"moreculling": "*",
-		"asyncparticles": "*",
-		"particle_core": "*",
-		"betterblockentities": "*",
 		"badoptimizations": "*",
 		"dynamic_fps": "*",
-		"debugify": "*",
 		"fastipping": "*",
 		"gnetum": "*",
-		"ixeris": "*",
 		"logcleaner": "*",
 		"packetfixer": "*",
 		"rrls": "*",
-		"cwb": "*",
-		"ferritecore": "*",
-		"krypton": "*",
-		"modernfix": "*"
+		"ferritecore": "*"
 	}
 }

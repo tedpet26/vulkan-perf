@@ -29,10 +29,12 @@ public final class VulkanPerfMixinPlugin implements IMixinConfigPlugin {
 			}
 			return switch (name) {
 				case "LevelCollisionMixin" -> config.logic.collisionCache;
-				case "HopperBlockEntityMixin" -> config.logic.hopper;
+				case "HopperBlockEntityMixin", "HopperIdleMixin" -> config.logic.hopper;
 				case "BrainMixin" -> config.logic.inactiveAi;
 				case "ShapesJoinMixin" -> config.logic.voxelShapes;
 				case "PathNavigationMixin" -> config.logic.pathCache;
+				case "ItemEntityMixin" -> config.logic.itemMerge;
+				case "MobAiMixin" -> config.logic.mobAiSkip;
 				default -> true;
 			};
 		}
@@ -41,6 +43,9 @@ public final class VulkanPerfMixinPlugin implements IMixinConfigPlugin {
 		}
 		if (mixinClassName.contains(".packets.")) {
 			return config.packets.enabled;
+		}
+		if (mixinClassName.contains(".memory.")) {
+			return config.memory.enabled && config.memory.internShapes;
 		}
 		if (mixinClassName.contains(".logging.")) {
 			return config.logging.enabled;
@@ -59,9 +64,6 @@ public final class VulkanPerfMixinPlugin implements IMixinConfigPlugin {
 		}
 		if (mixinClassName.contains(".hudspread.")) {
 			return config.hudspread.enabled;
-		}
-		if (mixinClassName.contains(".batching.")) {
-			return config.batching.enabled;
 		}
 		if (mixinClassName.contains(".reloadui.")) {
 			return config.reloadui.enabled;

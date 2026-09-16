@@ -61,7 +61,6 @@ public final class VulkanPerf implements ModInitializer {
 			case "logic" -> { c.logic.enabled = enabled; yield true; }
 			case "chunks" -> { c.chunks.enabled = enabled; yield true; }
 			case "packets" -> { c.packets.enabled = enabled; yield true; }
-			case "net" -> { c.net.enabled = enabled; yield true; }
 			case "memory" -> { c.memory.enabled = enabled; yield true; }
 			case "logging" -> { c.logging.enabled = enabled; yield true; }
 			case "power" -> { c.power.enabled = enabled; yield true; }
@@ -69,14 +68,9 @@ public final class VulkanPerf implements ModInitializer {
 			case "culling" -> { c.culling.enabled = enabled; yield true; }
 			case "clientcache" -> { c.clientcache.enabled = enabled; yield true; }
 			case "hudspread" -> { c.hudspread.enabled = enabled; yield true; }
-			case "batching" -> { c.batching.enabled = enabled; yield true; }
 			case "reloadui" -> { c.reloadui.enabled = enabled; yield true; }
 			case "ping" -> { c.ping.enabled = enabled; yield true; }
 			case "extras" -> { c.extras.enabled = enabled; yield true; }
-			case "window" -> { c.window.enabled = enabled; yield true; }
-			case "input" -> { c.input.enabled = enabled; yield true; }
-			case "blockentities" -> { c.blockentities.enabled = enabled; yield true; }
-			case "vanillafixes" -> { c.vanillafixes.enabled = enabled; yield true; }
 			default -> false;
 		};
 	}

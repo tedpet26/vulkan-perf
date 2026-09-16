@@ -6,9 +6,12 @@
 	"mixins": [
 		"logic.LevelCollisionMixin",
 		"logic.HopperBlockEntityMixin",
+		"logic.HopperIdleMixin",
 		"logic.BrainMixin",
 		"logic.ShapesJoinMixin",
 		"logic.PathNavigationMixin",
+		"logic.ItemEntityMixin",
+		"logic.MobAiMixin",
 		"chunks.ChunkGeneratorMixin",
 		"chunks.NoiseBasedChunkGeneratorMixin",
 		"chunks.IoWorkerMixin",
@@ -16,6 +19,7 @@
 		"packets.FriendlyByteBufMixin",
 		"packets.NbtAccounterMixin",
 		"packets.CompressionDecoderMixin",
+		"memory.ShapesJoinCacheMixin",
 		"logging.DedicatedServerMixin"
 	],
 	"injectors": {
