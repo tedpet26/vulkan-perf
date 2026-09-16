@@ -13,7 +13,7 @@ public final class JoinIsNotEmptyCache {
 	private JoinIsNotEmptyCache() {
 	}
 
-	public static boolean get(Object a, Object b, Object op) {
+	public static Boolean get(Object a, Object b, Object op) {
 		return CACHE.get(new Key(a, b, op));
 	}
 

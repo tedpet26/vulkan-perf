@@ -1,12 +1,12 @@
 package dev.vulkanperf.mixin.chunksys;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import dev.vulkanperf.chunksys.EnhancedAutosave;
 import dev.vulkanperf.chunksys.MidTickChunkTasks;
 import dev.vulkanperf.config.PerfConfig;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -14,17 +14,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.function.BooleanSupplier;
 
 /**
- * C2ME-style scheduling: mid-tick chunk task draining after each level tick,
- * plus autosave counter handling (staggered drain keeps the vanilla
- * save-everything pass from spiking a single tick).
+ * C2ME-style scheduling: mid-tick chunk task draining right after each level
+ * ticks, plus autosave staggering hooks. The level is captured with MixinExtras
+ * {@code @Local} from the enclosing for-each loop.
  */
 @Mixin(MinecraftServer.class)
 public abstract class MinecraftServerSchedulingMixin {
-	@Shadow
-	private int ticksUntilAutosave;
-
-	@Inject(method = "tickChildren", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;tick(Ljava/util/function/BooleanSupplier;)V", shift = At.Shift.AFTER))
-	private void vulkanperf$midTickChunkTasks(BooleanSupplier haveTime, CallbackInfo ci, ServerLevel level) {
+	@Inject(
+		method = "tickChildren",
+		at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;tick(Ljava/util/function/BooleanSupplier;)V", shift = At.Shift.AFTER)
+	)
+	private void vulkanperf$midTickChunkTasks(BooleanSupplier haveTime, CallbackInfo ci, @Local(ordinal = 0) ServerLevel level) {
 		MidTickChunkTasks.runMidTick(level);
 		if (PerfConfig.get().chunks.enhancedAutosave) {
 			EnhancedAutosave.drainOne();

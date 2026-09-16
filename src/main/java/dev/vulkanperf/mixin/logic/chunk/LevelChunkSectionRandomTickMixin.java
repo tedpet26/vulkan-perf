@@ -5,21 +5,24 @@ import net.minecraft.world.level.chunk.LevelChunkSection;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
- * Skips random-tick iteration for sections that contain nothing tickable.
+ * Fast negative answer for sections with nothing tickable: 26.3 tracks
+ * tickable counts incrementally, so make the combined query cheap to reuse.
+ * (26.3 has no per-section randomTick method; the flag is consumed by
+ * ServerLevel's ticking loop.)
  */
 @Mixin(LevelChunkSection.class)
 public abstract class LevelChunkSectionRandomTickMixin {
-	@Inject(method = "randomTick", at = @At("HEAD"), cancellable = true)
-	private void vulkanperf$skipEmptySection(CallbackInfo ci) {
+	@Inject(method = "isRandomlyTicking", at = @At("HEAD"), cancellable = true)
+	private void vulkanperf$skipEmptySection(CallbackInfoReturnable<Boolean> cir) {
 		if (!PerfConfig.get().logic.randomTickSkip) {
 			return;
 		}
 		LevelChunkSection self = (LevelChunkSection) (Object) this;
 		if (self.hasOnlyAir()) {
-			ci.cancel();
+			cir.setReturnValue(false);
 		}
 	}
 }

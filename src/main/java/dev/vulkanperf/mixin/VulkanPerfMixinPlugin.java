@@ -41,6 +41,7 @@ public final class VulkanPerfMixinPlugin implements IMixinConfigPlugin {
 				case "ClassInstanceMultiMapMixin" -> config.logic.entityTypeFiltering;
 				case "LevelChunkSectionRandomTickMixin" -> config.logic.randomTickSkip;
 				case "AbstractFurnaceSleepMixin", "BrewingStandSleepMixin" -> config.logic.sleepingBlockEntities;
+				case "BlockEntitySetChangedSleepMixin", "BlockEntityRemovedSleepMixin" -> config.logic.sleepingBlockEntities;
 				case "PoiManagerFindClosestMixin" -> config.logic.poiCache;
 				default -> true;
 			};
