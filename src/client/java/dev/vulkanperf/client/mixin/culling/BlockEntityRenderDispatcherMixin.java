@@ -28,7 +28,7 @@ public abstract class BlockEntityRenderDispatcherMixin {
 		double dx = pos.getX() + 0.5 - camera.position().x;
 		double dy = pos.getY() + 0.5 - camera.position().y;
 		double dz = pos.getZ() + 0.5 - camera.position().z;
-		double range = client.options.getEffectiveRenderDistance() * 16.0;
+		double range = Math.min(client.options.getEffectiveRenderDistance() * 16.0, PerfConfig.get().culling.entityMaxDistance);
 		if (dx * dx + dy * dy + dz * dz > range * range) {
 			cir.setReturnValue(null);
 		}

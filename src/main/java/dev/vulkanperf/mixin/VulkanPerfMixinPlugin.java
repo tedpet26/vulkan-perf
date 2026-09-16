@@ -29,18 +29,71 @@ public final class VulkanPerfMixinPlugin implements IMixinConfigPlugin {
 			}
 			return switch (name) {
 				case "LevelCollisionMixin" -> config.logic.collisionCache;
-				case "HopperBlockEntityMixin" -> config.logic.hopper;
+				case "HopperBlockEntityMixin", "HopperIdleMixin" -> config.logic.hopper;
+				case "HopperSleepMixin" -> config.logic.hopper && config.logic.hopperSleep;
 				case "BrainMixin" -> config.logic.inactiveAi;
 				case "ShapesJoinMixin" -> config.logic.voxelShapes;
+				case "ShapesJoinIsNotEmptyMixin" -> config.logic.joinIsNotEmptyCache;
 				case "PathNavigationMixin" -> config.logic.pathCache;
+				case "WalkNodeEvaluatorPathTypeMixin" -> config.logic.pathTypeCache;
+				case "ItemEntityMixin" -> config.logic.itemMerge;
+				case "MobAiMixin" -> config.logic.mobAiSkip;
+				case "ClassInstanceMultiMapMixin" -> config.logic.entityTypeFiltering;
+				case "LevelChunkSectionRandomTickMixin" -> config.logic.randomTickSkip;
+				case "AbstractFurnaceSleepMixin", "BrewingStandSleepMixin" -> config.logic.sleepingBlockEntities;
+				case "BlockEntitySetChangedSleepMixin", "BlockEntityRemovedSleepMixin" -> config.logic.sleepingBlockEntities;
+				case "PoiManagerFindClosestMixin" -> config.logic.poiCache;
 				default -> true;
 			};
 		}
 		if (mixinClassName.contains(".chunks.")) {
 			return config.chunks.enabled;
 		}
+		if (mixinClassName.contains(".chunksys.")) {
+			if (!config.chunks.enabled) {
+				return false;
+			}
+			return switch (name) {
+				case "MinecraftServerSchedulingMixin" -> config.chunks.midTickScheduling || config.chunks.enhancedAutosave;
+				case "ChunkMapLightingMixin" -> config.chunks.threadedLighting || config.chunks.viewDistanceDiagnostics;
+				case "ChunkMapAsyncMixin" -> config.chunks.asyncSerializationHooks;
+				case "RegionFileStorageCacheMixin" -> config.chunks.asyncIoDeepened;
+				case "OptionsViewDistanceMixin" -> config.chunks.clientViewDistanceUncap;
+				// Accessor mixins carry no behavior of their own; keep them applied
+				// whenever any dependent feature above might need them.
+				case "ChunkMapDistanceAccessor", "DistanceManagerAccessor" -> true;
+				default -> true;
+			};
+		}
 		if (mixinClassName.contains(".packets.")) {
 			return config.packets.enabled;
+		}
+		if (mixinClassName.contains(".memory.")) {
+			if (!config.memory.enabled) {
+				return false;
+			}
+			if (mixinClassName.contains(".memory.fastmap.")) {
+				return config.memory.fastMapNeighborLookup;
+			}
+			if (mixinClassName.contains(".memory.blockstate.")) {
+				return config.memory.blockStateCacheDedup;
+			}
+			if (mixinClassName.contains(".memory.components.")) {
+				return config.memory.dataComponentPatchSharing;
+			}
+			if (mixinClassName.contains(".memory.thread.")) {
+				return config.memory.smallThreadDetector;
+			}
+			if (mixinClassName.contains(".memory.accessors.")) {
+				return switch (name) {
+					case "StateHolderKeysAccessor" -> config.memory.fastMapNeighborLookup;
+					default -> config.memory.blockStateCacheDedup;
+				};
+			}
+			return switch (name) {
+				case "ShapesJoinCacheMixin" -> config.memory.internShapes;
+				default -> true;
+			};
 		}
 		if (mixinClassName.contains(".logging.")) {
 			return config.logging.enabled;
@@ -60,9 +113,6 @@ public final class VulkanPerfMixinPlugin implements IMixinConfigPlugin {
 		if (mixinClassName.contains(".hudspread.")) {
 			return config.hudspread.enabled;
 		}
-		if (mixinClassName.contains(".batching.")) {
-			return config.batching.enabled;
-		}
 		if (mixinClassName.contains(".reloadui.")) {
 			return config.reloadui.enabled;
 		}
@@ -71,6 +121,29 @@ public final class VulkanPerfMixinPlugin implements IMixinConfigPlugin {
 		}
 		if (mixinClassName.contains(".extras.")) {
 			return config.extras.enabled;
+		}
+		if (mixinClassName.contains(".imfast.")) {
+			if (!config.imfast.enabled) {
+				return false;
+			}
+			boolean iris = net.fabricmc.loader.api.FabricLoader.getInstance().isModLoaded("iris");
+			return switch (name) {
+				case "RenderTypeGroupReorderMixin", "ScissorStateMixin" -> config.imfast.enhancedBatching;
+				case "MapRendererMixin", "MapTextureManagerMixin", "MapInstanceMixin", "GuiGraphicsExtractorMapMixin", "MapRenderStateMixin" ->
+					config.imfast.mapAtlasGeneration;
+				case "FontTextureMixin" -> config.imfast.fontAtlasResizing;
+				case "TextGlyphLookupMixin", "RenderTypeVertexBuilderInvoker" -> config.imfast.fastTextLookup;
+				case "RenderTypesTextSortMixin" -> config.imfast.skipTextTranslucencySorting;
+				case "GuiRendererItemBatchMixin", "GuiItemAtlasAnimatedMixin", "GuiItemAtlasAccessor", "DynamicAtlasAllocatorAccessor", "DynamicAtlasSlotAccessor" ->
+					config.imfast.batchAnimatedItemUpdates;
+				case "GlCommandEncoderFramebufferMixin", "GlSurfacePresentMixin" -> config.imfast.avoidRedundantFramebufferSwitching;
+				case "GlCommandEncoderAppleUploadMixin" -> config.imfast.fixSlowBufferUploadOnAppleGpu;
+				case "AbstractSignRendererMixin", "SignTextMixin" -> config.imfast.signTextBuffering && !iris;
+				case "ShaderManagerConflictMixin" -> config.imfast.resourcePackConflictHandling;
+				case "GlDebugInfoMixin" -> config.imfast.printAdditionalErrorInformation;
+				case "MinecraftImFastInitMixin", "DebugScreenEntriesMixin", "GameRendererImFastAccessor", "MinecraftFontManagerAccessor" -> true;
+				default -> true;
+			};
 		}
 		return true;
 	}
