@@ -38,3 +38,5 @@ ship equivalent depth for them.
 
 `chunks` only redirects worldgen/IO onto local thread pools — it is **not** a
 C2ME-class chunk rewrite, so C2ME is not broken.
+
+See [docs/PERF_BENCH.md](docs/PERF_BENCH.md) for build validation and comparison notes.

@@ -25,7 +25,7 @@ public abstract class ItemEntityMixin {
 		method = "mergeWithNeighbours",
 		at = @At(
 			value = "INVOKE",
-			target = "Lnet/minecraft/world/level/EntityGetter;getEntitiesOfClass(Ljava/lang/Class;Lnet/minecraft/world/phys/AABB;Ljava/util/function/Predicate;)Ljava/util/List;"
+			target = "Lnet/minecraft/world/level/Level;getEntitiesOfClass(Ljava/lang/Class;Lnet/minecraft/world/phys/AABB;Ljava/util/function/Predicate;)Ljava/util/List;"
 		)
 	)
 	private List<ItemEntity> vulkanperf$cachedNeighbors(Level level, Class<ItemEntity> type, AABB box, Predicate<? super ItemEntity> predicate) {
