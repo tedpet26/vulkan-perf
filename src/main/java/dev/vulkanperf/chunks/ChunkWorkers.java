@@ -18,7 +18,6 @@ public final class ChunkWorkers {
 	private static ExecutorService io;
 	private static final AtomicBoolean fallback = new AtomicBoolean();
 	private static final ConcurrentHashMap<Long, Object> writeLocks = new ConcurrentHashMap<>();
-	private static final ThreadLocal<int[]> noiseScratch = ThreadLocal.withInitial(() -> new int[16]);
 
 	private ChunkWorkers() {
 	}
@@ -79,10 +78,6 @@ public final class ChunkWorkers {
 				}
 			}
 		};
-	}
-
-	public static int[] noiseScratch() {
-		return noiseScratch.get();
 	}
 
 	public static boolean isChunkWorker() {

@@ -30,7 +30,6 @@ public final class VulkanPerfMixinPlugin implements IMixinConfigPlugin {
 			return switch (name) {
 				case "LevelCollisionMixin" -> config.logic.collisionCache;
 				case "HopperBlockEntityMixin", "HopperIdleMixin" -> config.logic.hopper;
-				case "HopperSleepMixin" -> config.logic.hopper && config.logic.hopperSleep;
 				case "BrainMixin" -> config.logic.inactiveAi;
 				case "ShapesJoinMixin" -> config.logic.voxelShapes;
 				case "ShapesJoinIsNotEmptyMixin" -> config.logic.joinIsNotEmptyCache;
@@ -38,11 +37,7 @@ public final class VulkanPerfMixinPlugin implements IMixinConfigPlugin {
 				case "WalkNodeEvaluatorPathTypeMixin" -> config.logic.pathTypeCache;
 				case "ItemEntityMixin" -> config.logic.itemMerge;
 				case "MobAiMixin" -> config.logic.mobAiSkip;
-				case "ClassInstanceMultiMapMixin" -> config.logic.entityTypeFiltering;
 				case "LevelChunkSectionRandomTickMixin" -> config.logic.randomTickSkip;
-				case "AbstractFurnaceSleepMixin", "BrewingStandSleepMixin" -> config.logic.sleepingBlockEntities;
-				case "BlockEntitySetChangedSleepMixin", "BlockEntityRemovedSleepMixin" -> config.logic.sleepingBlockEntities;
-				case "PoiManagerFindClosestMixin" -> config.logic.poiCache;
 				default -> true;
 			};
 		}
@@ -54,14 +49,9 @@ public final class VulkanPerfMixinPlugin implements IMixinConfigPlugin {
 				return false;
 			}
 			return switch (name) {
-				case "MinecraftServerSchedulingMixin" -> config.chunks.midTickScheduling || config.chunks.enhancedAutosave;
-				case "ChunkMapLightingMixin" -> config.chunks.threadedLighting || config.chunks.viewDistanceDiagnostics;
-				case "ChunkMapAsyncMixin" -> config.chunks.asyncSerializationHooks;
+				case "MinecraftServerSchedulingMixin" -> config.chunks.midTickScheduling;
 				case "RegionFileStorageCacheMixin" -> config.chunks.asyncIoDeepened;
 				case "OptionsViewDistanceMixin" -> config.chunks.clientViewDistanceUncap;
-				// Accessor mixins carry no behavior of their own; keep them applied
-				// whenever any dependent feature above might need them.
-				case "ChunkMapDistanceAccessor", "DistanceManagerAccessor" -> true;
 				default -> true;
 			};
 		}

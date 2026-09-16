@@ -15,7 +15,7 @@ import java.nio.file.Path;
 public final class PerfConfig {
 	private static final Logger LOGGER = LoggerFactory.getLogger("vulkanperf");
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-	private static final int CONFIG_VERSION = 4;
+	private static final int CONFIG_VERSION = 5;
 	private static PerfConfig instance = new PerfConfig();
 
 	public int configVersion = 0;
@@ -88,15 +88,18 @@ public final class PerfConfig {
 			this.logic.pathCache = true;
 			this.logic.itemMerge = true;
 			this.logic.mobAiSkip = true;
-			this.logic.collisionShapeCache = true;
 			this.logic.hopperSleep = true;
-			this.logic.sleepingBlockEntities = true;
 			this.logic.joinIsNotEmptyCache = true;
 			this.logic.pathTypeCache = true;
-			this.logic.entityTypeFiltering = true;
-			this.logic.poiCache = true;
 			this.memory.enabled = true;
 			this.culling.entities = true;
+		}
+		if (this.configVersion < 5) {
+			// v5: the packets module is on by default (its mixins redirect vanilla
+			// constants to these same values, so nothing changes until a limit is
+			// raised) — required so the PacketFixer break always ships a working
+			// replacement.
+			this.packets.enabled = true;
 		}
 		this.configVersion = CONFIG_VERSION;
 	}
@@ -136,28 +139,14 @@ public final class PerfConfig {
 		public boolean mobAiSkip = true;
 
 		// Tier S expansion
-		/** Reuse the composite collision predicate + short-circuit entity collision shape building. */
-		public boolean collisionShapeCache = true;
-		/** Extend hopper idle-cooldown escalation and wake immediately on neighbor block changes. */
+		/** Extend the hopper idle cooldown and reset it when the hopper's inventory changes. */
 		public boolean hopperSleep = true;
-		/** Skip ticking furnace/brewing-stand block entities while fully idle; wake on setChanged. */
-		public boolean sleepingBlockEntities = true;
 		/** Cache Shapes#joinIsNotEmpty results for identical shape/op triples (occlusion, collision checks). */
 		public boolean joinIsNotEmptyCache = true;
 		/** Cache WalkNodeEvaluator#getPathTypeFromState results per BlockState instance, shared across mobs. */
 		public boolean pathTypeCache = true;
-		/** Skip recomputing paths for far/inactive navigations until a block update wakes them. */
-		public boolean inactiveNavigations = true;
-		/** Cache ClassInstanceMultiMap add/remove filter-list lookups per concrete entity class. */
-		public boolean entityTypeFiltering = true;
 		/** Skip random-tick iteration for all-air sections. */
 		public boolean randomTickSkip = true;
-		/** Cache FlowingFluid spread decisions for identical neighbor states. */
-		public boolean fluidFlow = true;
-
-		// Tier A expansion
-		/** Short (single-tick) cache for PoiManager#findClosest lookups reused by AI sensors. */
-		public boolean poiCache = true;
 	}
 
 	public static final class ChunksConfig {
@@ -165,46 +154,14 @@ public final class PerfConfig {
 		public int worldgenThreads = Math.max(1, Runtime.getRuntime().availableProcessors() - 1);
 		public int serializeThreads = 2;
 		public int ioThreads = 2;
-		public int lightThreads = Math.max(1, Runtime.getRuntime().availableProcessors() / 4);
 
-		// 1. Scheduling: mid-tick chunk task draining + staggered autosave.
+		// 1. Scheduling: mid-tick chunk task draining.
 		public boolean midTickScheduling = true;
 		public long midTickIntervalNanos = 2_000_000L;
-		public boolean enhancedAutosave = true;
 
 		// 2. Async IO: region file cache limits + executor rewiring.
 		public boolean asyncIoDeepened = true;
 		public int regionFileCacheSize = 256;
-		public int asyncSaveQueueLimit = 1024;
-
-		// 3. Async serialization hooks on the chunk load/save path.
-		public boolean asyncSerializationHooks = true;
-
-		// 4. DFC-lite: size RandomState density buffer pools for worldgen threads.
-		// Vanilla 26.3 already compiles density functions; we do not emit bytecode.
-		public boolean densityFunctionOpts = true;
-
-		// 5. Aquifer location preload + beardifier array sampling.
-		public boolean worldgenVanillaOpts = true;
-		public boolean worldgenSamplingGuards = true;
-
-		// 6. Dedicated lighting executor, decoupled from worldgen/save pools.
-		public boolean threadedLighting = true;
-
-		// 7. View distance diagnostics / NoTick-style helpers (read-only; see docs).
-		public boolean viewDistanceDiagnostics = true;
-		public boolean noTickViewDistance = false;
-
-		// 8. Allocation-reduction scratch pools (thread-confined, safe to pool).
-		public boolean allocPooling = true;
-
-		// 9. Worldgen thread-safety guards for the parallel generator executors.
-		public boolean worldgenThreadSafety = true;
-
-		// Hide RegionFile dsync behind a flag (default off: keep vanilla durability).
-		public boolean hideSyncDiskWrites = false;
-		public int nbtPendingWriteSoftLimit = 256;
-		public int nbtPendingWriteHardLimit = 8192;
 
 		// natives / OpenCL acceleration: unimplemented in this slice, always OFF.
 		public boolean nativesMath = false;
@@ -213,13 +170,16 @@ public final class PerfConfig {
 		// Full chunk-system rewrite (ticket/holder replacement): deferred.
 		public boolean rewriteChunkSystem = false;
 
-		// 10. Client-side: raise the render-distance slider cap beyond vanilla's 32.
+		// 3. Client-side: raise the render-distance slider cap beyond vanilla's 32.
 		public boolean clientViewDistanceUncap = true;
 		public int clientMaxViewDistance = 48;
 	}
 
 	public static final class PacketsConfig {
-		public boolean enabled = false;
+		/** On by default: the three mixins redirect vanilla constants to these same
+		 * values, so a fresh install changes nothing until a limit is raised.
+		 * Needed on-by-default because fabric.mod.json breaks PacketFixer. */
+		public boolean enabled = true;
 		public int nbtQuota = 2_097_152;
 		public int stringSize = 32767;
 		public int compression = 2_097_152;

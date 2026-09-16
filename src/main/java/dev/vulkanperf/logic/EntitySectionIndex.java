@@ -3,7 +3,6 @@ package dev.vulkanperf.logic;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.AABB;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -13,7 +12,6 @@ import java.util.function.Predicate;
  */
 public final class EntitySectionIndex {
 	private static final int SLOTS = 8;
-	private static final ThreadLocal<ArrayList<Entity>> FILTER_BUFFER = ThreadLocal.withInitial(ArrayList::new);
 
 	private final Slot[] slots = new Slot[SLOTS];
 	private int next;
@@ -41,20 +39,6 @@ public final class EntitySectionIndex {
 		slot.predicate = predicate;
 		slot.box = box;
 		slot.result = result.isEmpty() ? List.of() : List.copyOf(result);
-	}
-
-	public static List<Entity> filter(List<Entity> source, AABB box, Predicate<? super Entity> predicate) {
-		if (source.isEmpty()) {
-			return List.of();
-		}
-		ArrayList<Entity> out = FILTER_BUFFER.get();
-		out.clear();
-		for (Entity entity : source) {
-			if (entity != null && entity.getBoundingBox().intersects(box) && (predicate == null || predicate.test(entity))) {
-				out.add(entity);
-			}
-		}
-		return out.isEmpty() ? List.of() : List.copyOf(out);
 	}
 
 	private static final class Slot {

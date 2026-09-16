@@ -20,7 +20,13 @@ public abstract class EntityRenderDispatcherMixin {
 		cancellable = true
 	)
 	private void vulkanperf$occlusionCull(Entity entity, Frustum frustum, double camX, double camY, double camZ, float partialTicks, CallbackInfoReturnable<Boolean> cir) {
-		if (!PerfConfig.get().culling.enabled || !PerfConfig.get().culling.entities || entity == null) {
+		if (!PerfConfig.get().culling.enabled || !PerfConfig.get().culling.entities || entity == null || frustum == null) {
+			return;
+		}
+		// Out-of-frustum entities are already culled by vanilla right after this
+		// hook; skipping them here means occlusion tests are only scheduled for
+		// entities that would actually render.
+		if (!frustum.isVisible(entity.getBoundingBox())) {
 			return;
 		}
 		Minecraft client = Minecraft.getInstance();

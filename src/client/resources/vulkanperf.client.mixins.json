@@ -15,6 +15,7 @@
 		"hudspread.DebugScreenOverlayMixin",
 		"reloadui.LoadingOverlayMixin",
 		"ping.ServerStatusPingerMixin",
+		"chunksys.OptionsViewDistanceMixin",
 		"extras.sodium.SodiumRenderSectionManagerMixin",
 		"extras.sodium.SodiumOcclusionCullerMixin",
 		"extras.FogRendererMixin",

@@ -17,8 +17,8 @@ driver supports it; OpenGL remains the fallback.
 | Module | Replaces | Notes |
 | --- | --- | --- |
 | `extras` | Sodium Extra | Visual/detail toggles + Sodium config pages |
-| `logic` | Lithium (Tier S/A) | Hopper cache/sleep, entity-query cache, AI throttle, shape join + joinIsNotEmpty caches, path-type + inactive-nav caches, item merge, mob AI skip, sleeping block entities, entity type filtering, empty-section random-tick skip, POI query cache |
-| `culling` | Entity Culling | Entity occlusion + block-entity distance cull |
+| `logic` | Lithium (Tier S/A) | Hopper container cache + idle-cooldown sleep, entity-query cache, AI throttle, shape join + joinIsNotEmpty caches, path + path-type caches, item merge, mob AI skip, empty-section random-tick skip |
+| `culling` | Entity Culling | Async entity occlusion (multi-point raycasts, worker pool) + block-entity distance cull |
 | `clientcache` | BadOptimizations (partial) | Toast skip + sky color cache |
 | `power` | Dynamic FPS (partial) | Unfocused/hidden FPS cap + mute |
 | `ping` | Fast IP Ping | Numeric-IP fast resolve |
@@ -28,7 +28,7 @@ driver supports it; OpenGL remains the fallback.
 | `reloadui` | RRLS | Skip later loading overlays |
 | `memory` | FerriteCore | FastMap neighbor + property maps, blockstate cache dedup, empty component-patch sharing, VoxelShape join intern; opt-in compact FastMap and small threading detector (off by default) |
 | `imfast` | ImmediatelyFast | Map/font atlases, text batching, GUI animated-item atlas, sign buffering; GL-only framebuffer skip + Apple upload (no-op on Vulkan) |
-| `chunksys` | C2ME (scheduling slice) | Mid-tick chunk task drain, staggered autosave hooks, region-file cache config, render-distance uncap; not the full chunk-system rewrite |
+| `chunksys` | C2ME (scheduling slice) | Mid-tick chunk task drain, region-file cache config, render-distance uncap; not the full chunk-system rewrite |
 
 ## Not fully replaced
 
