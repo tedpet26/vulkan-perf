@@ -5,6 +5,14 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Caches {@code Shapes#joinIsNotEmpty} decisions for identical shape/op triples.
  * Occlusion and collision checks call this constantly with the same few shape pairs.
+ *
+ * <p><strong>Bootstrap contract:</strong> {@link #get} must return {@code null} on a
+ * miss and never throw. This handler runs during {@code Blocks}' static
+ * initialization (via vanilla's {@code SHAPE_FULL_BLOCK_CACHE}, which feeds
+ * {@code Shapes#joinIsNotEmpty} back into itself for weakly-reachable keys), and a
+ * primitive unwrap of a missing entry there crashes the game with an NPE before the
+ * world exists. Never "optimize" the boxed return into an auto-unboxed
+ * {@code boolean}.
  */
 public final class JoinIsNotEmptyCache {
 	private static final int MAX = 2048;

@@ -2,13 +2,17 @@ package dev.vulkanperf.client.imfast.batching;
 
 import dev.vulkanperf.client.imfast.ImFastRuntime;
 
-/** Always-on reorder flag for {@code RenderTypeFeatureRenderer$Group} when enhanced batching is active. */
+/**
+ * Gate for draw-consolidation widening in {@code RenderTypeFeatureRenderer$Group}.
+ * An active scissor window makes draw-order/draw-boundary changes unsafe, so the
+ * gate closes while one is open (tracked by {@code ScissorStateMixin}).
+ */
 public final class ReorderGate {
 	private ReorderGate() {
 	}
 
 	public static boolean allowReorder(boolean vanilla) {
-		return ImFastRuntime.enhancedBatching() || vanilla;
+		return vanilla || (ImFastRuntime.enhancedBatching() && !SCISSOR_ACTIVE);
 	}
 
 	/**
