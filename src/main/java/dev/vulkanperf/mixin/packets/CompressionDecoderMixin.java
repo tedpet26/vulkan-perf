@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.ModifyConstant;
 
 @Mixin(CompressionDecoder.class)
 public abstract class CompressionDecoderMixin {
-	@ModifyConstant(method = "decode", constant = @Constant(intValue = 2097152))
+	@ModifyConstant(method = "decode", constant = @Constant(intValue = 8388608))
 	private int vulkanperf$inflateLimit(int original) {
 		return PerfConfig.get().packets.compression;
 	}

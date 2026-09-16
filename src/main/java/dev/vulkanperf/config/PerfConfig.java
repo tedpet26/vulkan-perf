@@ -15,7 +15,7 @@ import java.nio.file.Path;
 public final class PerfConfig {
 	private static final Logger LOGGER = LoggerFactory.getLogger("vulkanperf");
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-	private static final int CONFIG_VERSION = 5;
+	private static final int CONFIG_VERSION = 6;
 	private static PerfConfig instance = new PerfConfig();
 
 	public int configVersion = 0;
@@ -101,6 +101,14 @@ public final class PerfConfig {
 			// replacement.
 			this.packets.enabled = true;
 		}
+		if (this.configVersion < 6) {
+			// v6: 26.3 raised the vanilla decompressed cap in CompressionDecoder
+			// from 2 MiB to 8 MiB; configs saved with the old 2 MiB default would
+			// silently clamp harder than vanilla.
+			if (this.packets.compression == 2_097_152) {
+				this.packets.compression = 8_388_608;
+			}
+		}
 		this.configVersion = CONFIG_VERSION;
 	}
 
@@ -182,7 +190,7 @@ public final class PerfConfig {
 		public boolean enabled = true;
 		public int nbtQuota = 2_097_152;
 		public int stringSize = 32767;
-		public int compression = 2_097_152;
+		public int compression = 8_388_608;
 	}
 
 	public static final class MemoryConfig {
