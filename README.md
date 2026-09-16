@@ -26,7 +26,7 @@ driver supports it; OpenGL remains the fallback.
 | `logging` | LogCleaner | Log4j spam filter |
 | `packets` | PacketFixer | NBT/string/compression limit bumps |
 | `reloadui` | RRLS | Skip later loading overlays |
-| `memory` | FerriteCore (partial) | VoxelShape join interning |
+| `memory` | FerriteCore | FastMap neighbor + property maps, blockstate cache dedup, empty component-patch sharing, VoxelShape join intern; opt-in compact FastMap and small threading detector (off by default) |
 
 ## Not replaced (install upstream if needed)
 
@@ -34,7 +34,8 @@ Do **not** expect parity with: **C2ME**, **ImmediatelyFast**, **Krypton**,
 **ModernFix**, **MoreCulling**, **AsyncParticles**, **Particle Core**,
 **Better Block Entities**, **Ixeris**, **Cubes Without Borders**, or
 **Debugify**. Those mods are allowed alongside this jar; vulkan-perf does not
-ship equivalent depth for them.
+ship equivalent depth for them. The `memory` module covers **FerriteCore** —
+do not install FerriteCore next to this jar.
 
 `chunks` only redirects worldgen/IO onto local thread pools — it is **not** a
 C2ME-class chunk rewrite, so C2ME is not broken.
