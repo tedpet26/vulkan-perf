@@ -17,7 +17,7 @@ driver supports it; OpenGL remains the fallback.
 | Module | Replaces | Notes |
 | --- | --- | --- |
 | `extras` | Sodium Extra | Visual/detail toggles + Sodium config pages |
-| `logic` | Lithium (partial) | Hopper cache, entity-query cache, AI throttle, shape/path caches, item merge, mob AI skip |
+| `logic` | Lithium (Tier S/A) | Hopper cache/sleep, entity-query cache, AI throttle, shape join + joinIsNotEmpty caches, path-type + inactive-nav caches, item merge, mob AI skip, sleeping block entities, entity type filtering, empty-section random-tick skip, POI query cache |
 | `culling` | Entity Culling | Entity occlusion + block-entity distance cull |
 | `clientcache` | BadOptimizations (partial) | Toast skip + sky color cache |
 | `power` | Dynamic FPS (partial) | Unfocused/hidden FPS cap + mute |
@@ -27,19 +27,24 @@ driver supports it; OpenGL remains the fallback.
 | `packets` | PacketFixer | NBT/string/compression limit bumps |
 | `reloadui` | RRLS | Skip later loading overlays |
 | `memory` | FerriteCore | FastMap neighbor + property maps, blockstate cache dedup, empty component-patch sharing, VoxelShape join intern; opt-in compact FastMap and small threading detector (off by default) |
-| `imfast` | ImmediatelyFast | Map/font atlases, text batching, GUI animated-item atlas; GL-only framebuffer skip + Apple upload (no-op on Vulkan) |
+| `imfast` | ImmediatelyFast | Map/font atlases, text batching, GUI animated-item atlas, sign buffering; GL-only framebuffer skip + Apple upload (no-op on Vulkan) |
+| `chunksys` | C2ME (scheduling slice) | Mid-tick chunk task drain, staggered autosave hooks, region-file cache config, render-distance uncap; not the full chunk-system rewrite |
 
-## Not replaced (install upstream if needed)
+## Not fully replaced
 
-Do **not** expect parity with: **C2ME**, **Krypton**,
-**ModernFix**, **MoreCulling**, **AsyncParticles**, **Particle Core**,
-**Better Block Entities**, **Ixeris**, **Cubes Without Borders**, or
-**Debugify**. Those mods are allowed alongside this jar; vulkan-perf does not
-ship equivalent depth for them. The `memory` module covers **FerriteCore** and
-the `imfast` module covers **ImmediatelyFast** — do not install those next to
-this jar.
+`chunksys` covers C2ME's **scheduling/IO options** but not its chunk-system
+rewrite, DFC bytecode compiler, threaded lighting, or natives/OpenCL — those
+remain upstream-only (`rewriteChunkSystem` and `nativesMath` config flags are
+placeholders, default off). C2ME is **not** broken, so the real mod can be
+installed alongside for the full rewrite.
 
-`chunks` only redirects worldgen/IO onto local thread pools — it is **not** a
-C2ME-class chunk rewrite, so C2ME is not broken.
+Do **not** install these next to this jar (replaced by the modules above):
+Lithium, Sodium Extra, Entity Culling, FerriteCore, ImmediatelyFast,
+BadOptimizations, Dynamic FPS, Fast IP Ping, Gnetum, LogCleaner, PacketFixer,
+RRLS.
 
-See [docs/PERF_BENCH.md](docs/PERF_BENCH.md) for build validation and comparison notes.
+Allowed alongside: C2ME, Krypton, ModernFix, MoreCulling, AsyncParticles,
+Particle Core, Better Block Entities, Ixeris, Cubes Without Borders, Debugify.
+
+See [docs/PERF_BENCH.md](docs/PERF_BENCH.md) for build validation and
+comparison notes, and [docs/ports/](docs/ports/) for the port checklists.
