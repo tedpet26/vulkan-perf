@@ -8,6 +8,7 @@
 		"power.FramerateLimitTrackerMixin",
 		"power.SoundEngineMixin",
 		"particles.ParticleEngineMixin",
+		"particles.FireworkStarterMixin",
 		"culling.BlockEntityRenderDispatcherMixin",
 		"culling.EntityRenderDispatcherMixin",
 		"clientcache.ToastManagerMixin",
