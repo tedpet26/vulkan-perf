@@ -71,6 +71,7 @@ public final class VulkanPerf implements ModInitializer {
 			case "reloadui" -> { c.reloadui.enabled = enabled; yield true; }
 			case "ping" -> { c.ping.enabled = enabled; yield true; }
 			case "extras" -> { c.extras.enabled = enabled; yield true; }
+			case "imfast" -> { c.imfast.enabled = enabled; yield true; }
 			default -> false;
 		};
 	}

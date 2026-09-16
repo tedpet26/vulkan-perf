@@ -124,9 +124,9 @@ public final class VulkanPerfMixinPlugin implements IMixinConfigPlugin {
 				case "MapRendererMixin", "MapTextureManagerMixin", "MapInstanceMixin", "GuiGraphicsExtractorMapMixin", "MapRenderStateMixin" ->
 					config.imfast.mapAtlasGeneration;
 				case "FontTextureMixin" -> config.imfast.fontAtlasResizing;
-				case "TextGlyphLookupMixin" -> config.imfast.fastTextLookup;
+				case "TextGlyphLookupMixin", "RenderTypeVertexBuilderInvoker" -> config.imfast.fastTextLookup;
 				case "RenderTypesTextSortMixin" -> config.imfast.skipTextTranslucencySorting;
-				case "GuiRendererItemBatchMixin", "GuiItemAtlasAccessor", "DynamicAtlasAllocatorAccessor", "DynamicAtlasSlotAccessor" ->
+				case "GuiRendererItemBatchMixin", "GuiItemAtlasAnimatedMixin", "GuiItemAtlasAccessor", "DynamicAtlasAllocatorAccessor", "DynamicAtlasSlotAccessor" ->
 					config.imfast.batchAnimatedItemUpdates;
 				case "GlCommandEncoderFramebufferMixin", "GlSurfacePresentMixin" -> config.imfast.avoidRedundantFramebufferSwitching;
 				case "GlCommandEncoderAppleUploadMixin" -> config.imfast.fixSlowBufferUploadOnAppleGpu;

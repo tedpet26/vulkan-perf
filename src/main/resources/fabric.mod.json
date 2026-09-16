@@ -27,6 +27,7 @@
 		"sodium": "*"
 	},
 	"breaks": {
+		"immediatelyfast": "*",
 		"lithium": "*",
 		"sodium-extra": "*",
 		"entityculling": "*",
