@@ -10,7 +10,7 @@
 	"entrypoints": {
 		"main": ["dev.vulkanperf.VulkanPerf"],
 		"client": ["dev.vulkanperf.client.VulkanPerfClient"],
-		"sodium:config_api_user": ["dev.vulkanperf.client.extras.ExtrasSodiumConfig"]
+		"sodium:config_api_user": ["dev.vulkanperf.client.config.VulkanPerfSodiumConfig"]
 	},
 	"mixins": [
 		"vulkanperf.mixins.json",
