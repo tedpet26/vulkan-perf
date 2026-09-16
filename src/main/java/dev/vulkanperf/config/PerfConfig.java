@@ -146,8 +146,14 @@ public final class PerfConfig {
 		public boolean joinIsNotEmptyCache = true;
 		/** Cache WalkNodeEvaluator#getPathTypeFromState results per BlockState instance, shared across mobs. */
 		public boolean pathTypeCache = true;
+		/** Skip recomputing paths for far/inactive navigations until a block update wakes them. */
+		public boolean inactiveNavigations = true;
 		/** Cache ClassInstanceMultiMap add/remove filter-list lookups per concrete entity class. */
 		public boolean entityTypeFiltering = true;
+		/** Skip random-tick iteration for all-air sections. */
+		public boolean randomTickSkip = true;
+		/** Cache FlowingFluid spread decisions for identical neighbor states. */
+		public boolean fluidFlow = true;
 
 		// Tier A expansion
 		/** Short (single-tick) cache for PoiManager#findClosest lookups reused by AI sensors. */

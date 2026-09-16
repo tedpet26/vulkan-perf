@@ -30,11 +30,18 @@ public final class VulkanPerfMixinPlugin implements IMixinConfigPlugin {
 			return switch (name) {
 				case "LevelCollisionMixin" -> config.logic.collisionCache;
 				case "HopperBlockEntityMixin", "HopperIdleMixin" -> config.logic.hopper;
+				case "HopperSleepMixin" -> config.logic.hopper && config.logic.hopperSleep;
 				case "BrainMixin" -> config.logic.inactiveAi;
 				case "ShapesJoinMixin" -> config.logic.voxelShapes;
+				case "ShapesJoinIsNotEmptyMixin" -> config.logic.joinIsNotEmptyCache;
 				case "PathNavigationMixin" -> config.logic.pathCache;
+				case "WalkNodeEvaluatorPathTypeMixin" -> config.logic.pathTypeCache;
 				case "ItemEntityMixin" -> config.logic.itemMerge;
 				case "MobAiMixin" -> config.logic.mobAiSkip;
+				case "ClassInstanceMultiMapMixin" -> config.logic.entityTypeFiltering;
+				case "LevelChunkSectionRandomTickMixin" -> config.logic.randomTickSkip;
+				case "AbstractFurnaceSleepMixin", "BrewingStandSleepMixin" -> config.logic.sleepingBlockEntities;
+				case "PoiManagerFindClosestMixin" -> config.logic.poiCache;
 				default -> true;
 			};
 		}
