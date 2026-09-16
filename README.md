@@ -1,9 +1,14 @@
-# Example Mod
+# vulkan-perf
 
-## Setup
+Fabric performance suite for Minecraft 26.3, built against Blaze3D so it runs
+on Vulkan and OpenGL.
 
-For setup instructions, please see the [Fabric Documentation page](https://docs.fabricmc.net/develop/getting-started/creating-a-project#setting-up) related to the IDE that you are using.
+Requires **Fabric Loader**, **Fabric API**, and **Sodium** (for the extras
+pages). Do not install Lithium, C2ME, Sodium Extra, or the other replaced mods
+alongside this jar.
 
-## License
+Config: `config/vulkanperf.json`  
+Command: `/vulkanperf` (modules, reload)
 
-This template is available under the CC0 license. Feel free to learn from it and incorporate it in your own projects.
+Graphics API: Video Settings → Graphics API. Use the Vulkan option when the
+driver supports it; OpenGL remains the fallback.

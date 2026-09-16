@@ -32,6 +32,10 @@ bin/
 
 run/
 
+# reference clones and decompilations (never commit)
+ref/
+
+
 # java
 
 hs_err_*.log

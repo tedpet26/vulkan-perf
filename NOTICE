@@ -1,0 +1,33 @@
+vulkan-perf
+
+This project reimplements Minecraft 26.3 performance features inspired by
+public Fabric mods. Upstream source was used only as reference (GitHub tags
+first). No upstream classes were pasted or shaded.
+
+Reference projects and licenses (see each project's repository for full terms):
+
+- Lithium — CaffeineMC — LGPL-3.0
+- Concurrent Chunk Management Engine (C2ME) — RelativityMC / ishland — MIT
+  (C2ME OpenCL module is ARR and was not used)
+- Sodium Extra — FlashyReese — LGPL-3.0 (requires Sodium at runtime)
+- Sodium — CaffeineMC — PolyForm Shield (dependency only; not vendored)
+- ImmediatelyFast — RaphiMC — LGPL-3.0
+- EntityCulling — tr7zw — Protective License (non-commercial); algorithms
+  reimplemented originally
+- MoreCulling — FxMorin — GPL-3.0
+- AsyncParticles — Harveykang — LGPL-3.0
+- Particle Core — fzzyhmstrs — MIT
+- Better Block Entities — EdeenMC — LGPL-3.0
+- BadOptimizations — thosea — MIT
+- Dynamic FPS — juliand665 / LostLuma — MIT
+- Debugify — isXander — LGPL-3.0-or-later
+- Fast IP Ping — Fallen-Breath — LGPL-3.0-or-later
+- Gnetum — decce6 — LGPL-3.0
+- Ixeris — decce6 — LGPL-3.0
+- LogCleaner — noramibu / altrisi — GPL-3.0
+- PacketFixer — TonimatasDEV — MIT
+- RRLS — dima-dencep — OSL-3.0
+- Cubes Without Borders — Kira-NT — MIT
+- FerriteCore — malte0811 — MIT
+- Krypton — astei — LGPL-3.0
+- ModernFix (mVUS Fabric fork) — LGPL-3.0

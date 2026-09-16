@@ -1,0 +1,46 @@
+{
+	"required": true,
+	"package": "dev.vulkanperf.client.mixin",
+	"compatibilityLevel": "JAVA_25",
+	"plugin": "dev.vulkanperf.mixin.VulkanPerfMixinPlugin",
+	"client": [
+		"backend.MinecraftBackendMixin",
+		"power.FramerateLimitTrackerMixin",
+		"power.SoundEngineMixin",
+		"particles.ParticleEngineMixin",
+		"culling.BlockEntityRenderDispatcherMixin",
+		"clientcache.ToastManagerMixin",
+		"clientcache.SkyColorCacheMixin",
+		"hudspread.DebugScreenOverlayMixin",
+		"batching.GuiRendererMixin",
+		"reloadui.LoadingOverlayMixin",
+		"ping.ServerStatusPingerMixin",
+		"extras.sodium.SodiumRenderSectionManagerMixin",
+		"extras.sodium.SodiumOcclusionCullerMixin",
+		"extras.FogRendererMixin",
+		"extras.ParticleEngineFilterMixin",
+		"extras.ClientLevelParticleMixin",
+		"extras.WeatherEffectRendererMixin",
+		"extras.SkyRendererMixin",
+		"extras.BeaconRendererMixin",
+		"extras.LivingEntityRendererMixin",
+		"extras.ArmorStandRendererMixin",
+		"extras.OverlayGuiMixin",
+		"extras.SpriteAnimationMixin",
+		"extras.TextureAtlasAnimationMixin",
+		"extras.ToastFilterMixin",
+		"extras.LevelLightEngineMixin",
+		"extras.ItemFrameRendererMixin",
+		"extras.PaintingRendererMixin",
+		"extras.PistonHeadRendererMixin",
+		"extras.EnchantTableRendererMixin",
+		"extras.BiomeColorsMixin",
+		"extras.SkyColorsMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"overwrites": {
+		"requireAnnotations": true
+	}
+}

@@ -1,0 +1,27 @@
+{
+	"required": true,
+	"package": "dev.vulkanperf.mixin",
+	"compatibilityLevel": "JAVA_25",
+	"plugin": "dev.vulkanperf.mixin.VulkanPerfMixinPlugin",
+	"mixins": [
+		"logic.LevelCollisionMixin",
+		"logic.HopperBlockEntityMixin",
+		"logic.BrainMixin",
+		"logic.ShapesJoinMixin",
+		"logic.PathNavigationMixin",
+		"chunks.ChunkGeneratorMixin",
+		"chunks.NoiseBasedChunkGeneratorMixin",
+		"chunks.IoWorkerMixin",
+		"chunks.ChunkMapIoMixin",
+		"packets.FriendlyByteBufMixin",
+		"packets.NbtAccounterMixin",
+		"packets.CompressionDecoderMixin",
+		"logging.DedicatedServerMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"overwrites": {
+		"requireAnnotations": true
+	}
+}
