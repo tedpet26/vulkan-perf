@@ -116,7 +116,18 @@ public final class VulkanPerfSodiumConfig implements ConfigEntryPoint, StorageEv
 				.addOption(gatedFlag(b, "logic.randomTickSkip", "Random tick skip", "Skip random-tick iteration for all-air sections. " + RESTART,
 					v -> PerfConfig.get().logic.randomTickSkip = v, () -> PerfConfig.get().logic.randomTickSkip, true, "module.logic"))
 				.addOption(gatedFlag(b, "logic.fluidRandomTickCache", "Fluid random-tick cache", "Cache isRandomlyTicking per fluid state so random-tick loops skip the virtual dispatch. " + RESTART,
-					v -> PerfConfig.get().logic.fluidRandomTickCache = v, () -> PerfConfig.get().logic.fluidRandomTickCache, true, "module.logic")));
+					v -> PerfConfig.get().logic.fluidRandomTickCache = v, () -> PerfConfig.get().logic.fluidRandomTickCache, true, "module.logic")))
+			.addOptionGroup(group(b, "Full-parity expansion")
+				.addOption(gatedFlag(b, "logic.sleepingBlockEntities", "Sleeping block entities", "Idle furnaces, brewing stands, campfires, shulker boxes and hoppers park their ticker until something changes. " + RESTART,
+					v -> PerfConfig.get().logic.sleepingBlockEntities = v, () -> PerfConfig.get().logic.sleepingBlockEntities, true, "module.logic"))
+				.addOption(gatedFlag(b, "logic.entityCollisionGroups", "Collision class groups", "Hard-collision queries only scan entity classes that can collide at all. " + RESTART,
+					v -> PerfConfig.get().logic.entityCollisionGroups = v, () -> PerfConfig.get().logic.entityCollisionGroups, true, "module.logic"))
+				.addOption(gatedFlag(b, "logic.entityFastMovement", "Lazy collision sweep", "Entity movement builds collision shapes lazily during the per-axis sweep. " + RESTART,
+					v -> PerfConfig.get().logic.entityFastMovement = v, () -> PerfConfig.get().logic.entityFastMovement, true, "module.logic"))
+				.addOption(gatedFlag(b, "logic.entityFastRetrieval", "Fast entity retrieval", "Small-box entity queries use direct section lookups instead of ordered walks. " + RESTART,
+					v -> PerfConfig.get().logic.entityFastRetrieval = v, () -> PerfConfig.get().logic.entityFastRetrieval, true, "module.logic"))
+				.addOption(gatedFlag(b, "logic.fastRaycast", "Allocation-free raycasts", "Reusable ray-trace state removes per-call lambda allocation. " + RESTART,
+					v -> PerfConfig.get().logic.fastRaycast = v, () -> PerfConfig.get().logic.fastRaycast, true, "module.logic")));
 	}
 
 	private OptionPageBuilder chunksPage(ConfigBuilder b) {
@@ -141,8 +152,10 @@ public final class VulkanPerfSodiumConfig implements ConfigEntryPoint, StorageEv
 					v -> PerfConfig.get().chunks.midTickIntervalNanos = v * 1_000_000L, () -> (int) (PerfConfig.get().chunks.midTickIntervalNanos / 1_000_000L), 2, 0, 50, 1, "chunks.midTickScheduling")
 					.setValueFormatter(v -> Component.literal(v + " ms"))))
 			.addOptionGroup(group(b, "Storage")
-				.addOption(gatedFlag(b, "chunks.asyncIoDeepened", "Deep async IO", "Larger region file caches and executor rewiring. " + RESTART,
+				.addOption(gatedFlag(b, "chunks.asyncIoDeepened", "Deep async IO", "Larger region file caches, executor rewiring, fsync relax. " + RESTART,
 					v -> PerfConfig.get().chunks.asyncIoDeepened = v, () -> PerfConfig.get().chunks.asyncIoDeepened, true, "module.chunks"))
+				.addOption(gatedFlag(b, "chunks.worldgenOpts", "Worldgen micro-optimizations", "Thread-confined randoms without atomics, pooled ore BitSets, NBT copy maps, thread-safe structure caches. " + RESTART,
+					v -> PerfConfig.get().chunks.worldgenOpts = v, () -> PerfConfig.get().chunks.worldgenOpts, true, "module.chunks"))
 				.addOption(gatedInt(b, "chunks.regionFileCacheSize", "Region file cache size", "Number of open region files kept cached.",
 					v -> PerfConfig.get().chunks.regionFileCacheSize = v, () -> PerfConfig.get().chunks.regionFileCacheSize, 256, 16, 1024, 16, "chunks.asyncIoDeepened")))
 			.addOptionGroup(group(b, "Client")
@@ -160,6 +173,9 @@ public final class VulkanPerfSodiumConfig implements ConfigEntryPoint, StorageEv
 	private OptionPageBuilder networkPage(ConfigBuilder b) {
 		return b.createOptionPage()
 			.setName(Component.literal("Network"))
+			.addOptionGroup(group(b, "Frame/codec optimizations (Krypton-class)")
+				.addOption(gatedFlag(b, "network.enabled", "Network fast paths", "SWAR frame decode, table VarInt sizing, single-pass string encode, shared prepender. Disabled automatically while Krypton is installed. " + RESTART,
+					v -> PerfConfig.get().network.enabled = v, () -> PerfConfig.get().network.enabled, true)))
 			.addOptionGroup(group(b, "Vanilla limits (redirected while the module is on)")
 				.addOption(gatedInt(b, "packets.nbtQuota", "NBT quota", "Maximum size of NBT read from the network. Vanilla default: 2 MiB.",
 					v -> PerfConfig.get().packets.nbtQuota = v, () -> PerfConfig.get().packets.nbtQuota, 2_097_152, 1_048_576, 67_108_864, 1_048_576, "module.packets")
@@ -209,7 +225,13 @@ public final class VulkanPerfSodiumConfig implements ConfigEntryPoint, StorageEv
 					v -> PerfConfig.get().culling.blockEntities = v, () -> PerfConfig.get().culling.blockEntities, true, "module.culling")))
 			.addOptionGroup(group(b, "Particles")
 				.addOption(gatedFlag(b, "particles.frustumCull", "Frustum cull particles", "Skip particles outside the camera view. " + RESTART,
-					v -> PerfConfig.get().particles.frustumCull = v, () -> PerfConfig.get().particles.frustumCull, true, "module.particles")));
+					v -> PerfConfig.get().particles.frustumCull = v, () -> PerfConfig.get().particles.frustumCull, true, "module.particles"))
+				.addOption(gatedFlag(b, "particles.frustumBoundingBox", "Bounding-box frustum test", "Test large particles by bounding box instead of center point. " + RESTART,
+					v -> PerfConfig.get().particles.frustumBoundingBox = v, () -> PerfConfig.get().particles.frustumBoundingBox, true, "module.particles"))
+				.addOption(gatedFlag(b, "particles.renderDistanceCull", "Particle render distance", "Skip particles beyond a range derived from the render distance. " + RESTART,
+					v -> PerfConfig.get().particles.renderDistanceCull = v, () -> PerfConfig.get().particles.renderDistanceCull, true, "module.particles"))
+				.addOption(gatedFlag(b, "particles.lightCache", "Particle light cache", "Reuse lightmap lookups within a game tick. " + RESTART,
+					v -> PerfConfig.get().particles.lightCache = v, () -> PerfConfig.get().particles.lightCache, true, "module.particles")));
 	}
 
 	private OptionPageBuilder clientPage(ConfigBuilder b) {

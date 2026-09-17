@@ -34,6 +34,9 @@ public final class PerfConfig {
 	public PingConfig ping = new PingConfig();
 	public ExtrasConfig extras = new ExtrasConfig();
 	public ImFastConfig imfast = new ImFastConfig();
+	public NetworkConfig network = new NetworkConfig();
+	public MoreCullingConfig moreculling = new MoreCullingConfig();
+	public MfixConfig mfix = new MfixConfig();
 
 	public static PerfConfig get() {
 		return instance;
@@ -134,6 +137,9 @@ public final class PerfConfig {
 		if (ping == null) ping = new PingConfig();
 		if (extras == null) extras = new ExtrasConfig();
 		if (imfast == null) imfast = new ImFastConfig();
+		if (network == null) network = new NetworkConfig();
+		if (moreculling == null) moreculling = new MoreCullingConfig();
+		if (mfix == null) mfix = new MfixConfig();
 	}
 
 	public static final class LogicConfig {
@@ -157,6 +163,46 @@ public final class PerfConfig {
 		public boolean randomTickSkip = true;
 		/** Cache FluidState#isRandomlyTicking per fluid-state instance (constant per state, hot in random-tick loops). */
 		public boolean fluidRandomTickCache = true;
+
+		// Full-parity expansion (Tier S entity/collision)
+		/** Class-group filtered hard-collision queries + per-section collision indexes. */
+		public boolean entityCollisionGroups = true;
+		/** Lazy collider materialisation for Entity#collide movement sweeps. */
+		public boolean entityFastMovement = true;
+		/** Direct section lookups for small-box entity queries. */
+		public boolean entityFastRetrieval = true;
+		/** Sleeping block entities: idle block entities park their ticker until something changes. */
+		public boolean sleepingBlockEntities = true;
+		/** Cache Shapes#joinIsNotEmpty cuboid fast path (VoxelShapeMatchesAnywhere equivalent). */
+		public boolean shapesCuboidMatch = true;
+		/** Cache World#noCollision entity half with class groups (no shape building for empty checks). */
+		public boolean fastNoCollision = true;
+		/** Keep inactive mob navigations out of the block-update notification set. */
+		public boolean inactiveNavigations = true;
+		/** int-keyed LevelChunkTicks rewrite (scheduled block/fluid ticks). */
+		public boolean tickScheduler = true;
+		/** Raycast without lambda allocation per clip call. */
+		public boolean fastRaycast = true;
+		/** Explosion position/air-count caches. */
+		public boolean explosionOpts = true;
+		/** Math overwrites: BlockPos/Direction/AABB helpers and sine LUT. */
+		public boolean mathOpts = true;
+		/** Allocation trims: enum values, composter, entity iteration, NBT copy. */
+		public boolean allocOpts = true;
+		/** POI lookup overwrites (no Streams in find/getInRange paths). */
+		public boolean poiOpts = true;
+		/** Per-blockstate neighbor path-type cache + node evaluator short-circuits. */
+		public boolean pathNeighborCache = true;
+		/** Combined single-pass heightmap update on chunk setBlockState. */
+		public boolean combinedHeightmap = true;
+		/** Redstone wire redundant update suppression. */
+		public boolean redstoneOpts = true;
+		/** Fluid spread caching. */
+		public boolean fluidFlowOpts = true;
+		/** Game event dispatch distance skips. */
+		public boolean gameEventOpts = true;
+		/** Cached noise generator settings accessor. */
+		public boolean cachedGenSettings = true;
 	}
 
 	public static final class ChunksConfig {
@@ -172,6 +218,9 @@ public final class PerfConfig {
 		// 2. Async IO: region file cache limits + executor rewiring.
 		public boolean asyncIoDeepened = true;
 		public int regionFileCacheSize = 256;
+
+		// C2ME-class worldgen micro-optimizations: alloc trims, random swaps, structure-sync fixes.
+		public boolean worldgenOpts = true;
 
 		// natives / OpenCL acceleration: unimplemented in this slice, always OFF.
 		public boolean nativesMath = false;
@@ -227,6 +276,14 @@ public final class PerfConfig {
 	public static final class ParticlesConfig {
 		public boolean enabled = true;
 		public boolean frustumCull = true;
+		/** Cull particles by bounding box against the frustum (better for large particles). */
+		public boolean frustumBoundingBox = true;
+		/** Skip particles beyond an effective range derived from the render distance. */
+		public boolean renderDistanceCull = true;
+		/** Multiplier applied to the render distance for the particle cull range. */
+		public double renderDistanceMultiplier = 1.25;
+		/** Cache particle lightmap lookups once per game tick. */
+		public boolean lightCache = true;
 	}
 
 	public static final class CullingConfig {
@@ -330,5 +387,36 @@ public final class PerfConfig {
 		public boolean printAdditionalErrorInformation = false;
 		/** Per-element-list bounds union so GuiRenderState#hasIntersection short-circuits instead of scanning every element. */
 		public boolean guiIntersectionFastPath = true;
+	}
+
+	/**
+	 * Krypton-class network micro-optimizations (frame decode, varint/string encode, shared
+	 * prepender). Native compression/encryption stay upstream-only (see README).
+	 */
+	public static final class NetworkConfig {
+		public boolean enabled = true;
+	}
+	/**
+	 * MoreCulling-class block/entity render culling. The leaves face culling core is already
+	 * vanilla in 26.3 (cutout leaves); the remaining wins live here.
+	 */
+	public static final class MoreCullingConfig {
+		public boolean enabled = true;
+		/** Skip sign text on the side of the sign facing away from the camera. */
+		public boolean signTextBackFace = true;
+	}
+
+	/**
+	 * ModernFix-class startup/memory fixes. Lazy search trees and the encoder-cache soft
+	 * references are already vanilla in 26.3; the remaining wins live here.
+	 */
+	public static final class MfixConfig {
+		public boolean enabled = true;
+		/** Index zip resource packs once instead of re-walking the central directory per query. */
+		public boolean zipIndex = true;
+		/** Expire decoded OpenAL sound buffers after 30s of disuse. */
+		public boolean dynamicSounds = true;
+		/** Soft-reference the structure template cache so cold templates can be GC'd. */
+		public boolean dynamicStructures = true;
 	}
 }

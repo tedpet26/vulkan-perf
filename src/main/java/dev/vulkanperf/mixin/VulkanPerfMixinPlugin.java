@@ -9,9 +9,17 @@ import java.util.List;
 import java.util.Set;
 
 public final class VulkanPerfMixinPlugin implements IMixinConfigPlugin {
+	private static boolean modLoaded(String id) {
+		return net.fabricmc.loader.api.FabricLoader.getInstance().isModLoaded(id);
+	}
+
 	@Override
 	public void onLoad(String mixinPackage) {
 		PerfConfig.load();
+		// Smaller Netty arenas (4 MiB instead of 16 MiB chunks) unless the user pinned one.
+		if (System.getProperty("io.netty.allocator.maxOrder") == null) {
+			System.setProperty("io.netty.allocator.maxOrder", "9");
+		}
 	}
 
 	@Override
@@ -27,23 +35,55 @@ public final class VulkanPerfMixinPlugin implements IMixinConfigPlugin {
 			if (!config.logic.enabled) {
 				return false;
 			}
+			if (mixinClassName.contains(".collision.") || mixinClassName.contains(".sleeping.")
+					|| mixinClassName.contains(".raycast.") || name.equals("ClassInstanceMultiMapMixin")) {
+				// These areas fully replace Lithium; this mod already breaks it, but stay safe
+				// against forks under different mod ids.
+				if (modLoaded("lithium") || modLoaded("rxithium")) {
+					return false;
+				}
+			}
 			return switch (name) {
 				case "LevelCollisionMixin" -> config.logic.collisionCache;
-				case "HopperBlockEntityMixin", "HopperIdleMixin" -> config.logic.hopper;
+				case "HopperBlockEntityMixin", "HopperIdleMixin", "HopperSleepMixin" -> config.logic.hopper;
 				case "BrainMixin" -> config.logic.inactiveAi;
 				case "ShapesJoinMixin" -> config.logic.voxelShapes;
 				case "ShapesJoinIsNotEmptyMixin" -> config.logic.joinIsNotEmptyCache;
+				case "ShapesCuboidMatchMixin" -> config.logic.shapesCuboidMatch;
 				case "PathNavigationMixin" -> config.logic.pathCache;
 				case "WalkNodeEvaluatorPathTypeMixin" -> config.logic.pathTypeCache;
 				case "ItemEntityMixin" -> config.logic.itemMerge;
 				case "MobAiMixin" -> config.logic.mobAiSkip;
 				case "LevelChunkSectionRandomTickMixin" -> config.logic.randomTickSkip;
 				case "FluidStateRandomTickMixin" -> config.logic.fluidRandomTickCache;
+				case "EntityGetterCollisionsMixin", "ClassInstanceMultiMapMixin", "EntitySectionAccessor",
+					"PersistentEntitySectionManagerAccessor", "ServerLevelEntityManagerAccessor" -> config.logic.entityCollisionGroups;
+				case "EntitySectionStorageMixin" -> config.logic.entityFastRetrieval;
+				case "EntityCollideMixin" -> config.logic.entityFastMovement;
+				case "LevelChunkTickerHookMixin", "BlockEntitySleepMixin", "LevelTickBlocksGuardMixin", "SleepingFurnaceMixin",
+					"SleepingHopperBlockEntityMixin", "SleepingBrewingStandMixin", "SleepingCampfireMixin", "SleepingCrafterMixin",
+					"SleepingShulkerBoxMixin", "SleepingSculkMixin" -> config.logic.sleepingBlockEntities;
+				case "InactiveNavigationMixin", "InactiveNavigationLevelMixin", "InactiveNavigationMobMixin" -> config.logic.inactiveNavigations;
+				case "LevelChunkTicksMixin" -> config.logic.tickScheduler;
+				case "BlockGetterRaycastMixin" -> config.logic.fastRaycast;
+				case "ServerExplosionMixin" -> config.logic.explosionOpts;
+				case "BlockPosFastMixin", "DirectionFastMixin", "AabbFastMixin", "MthSineMixin" -> config.logic.mathOpts;
+				case "ComposterAllocMixin", "EntitySectionIterationMixin", "CompoundTagCopyMixin", "DirectionValuesMixin" -> config.logic.allocOpts;
+				case "PoiManagerFastMixin", "PoiSectionFastMixin" -> config.logic.poiOpts;
+				case "PathNeighborCacheMixin", "BlockStatePathCacheInitMixin" -> config.logic.pathNeighborCache;
+				case "LevelChunkHeightmapMixin" -> config.logic.combinedHeightmap;
+				case "RedstoneWireEvaluatorMixin" -> config.logic.redstoneOpts;
+				case "FlowingFluidSpreadMixin" -> config.logic.fluidFlowOpts;
+				case "GameEventDispatcherMixin" -> config.logic.gameEventOpts;
+				case "NoiseBasedChunkGeneratorSettingsMixin" -> config.logic.cachedGenSettings;
 				default -> true;
 			};
 		}
 		if (mixinClassName.contains(".chunks.")) {
 			return config.chunks.enabled;
+		}
+		if (mixinClassName.contains(".worldgen.")) {
+			return config.chunks.enabled && config.chunks.worldgenOpts;
 		}
 		if (mixinClassName.contains(".chunksys.")) {
 			if (!config.chunks.enabled) {
@@ -86,6 +126,24 @@ public final class VulkanPerfMixinPlugin implements IMixinConfigPlugin {
 				default -> true;
 			};
 		}
+		if (mixinClassName.contains(".network.")) {
+			// Krypton rewrites the same frame/codec paths; defer to the real mod when present.
+			return config.network.enabled && !modLoaded("krypton");
+		}
+		if (mixinClassName.contains(".moreculling.")) {
+			return config.moreculling.enabled && !modLoaded("moreculling");
+		}
+		if (mixinClassName.contains(".mfix.")) {
+			if (!config.mfix.enabled || modLoaded("modernfix")) {
+				return false;
+			}
+			return switch (name) {
+				case "FilePackResourcesIndexMixin" -> config.mfix.zipIndex;
+				case "SoundBufferLibraryExpiryMixin" -> config.mfix.dynamicSounds;
+				case "StructureTemplateManagerSoftCacheMixin" -> config.mfix.dynamicStructures;
+				default -> true;
+			};
+		}
 		if (mixinClassName.contains(".logging.")) {
 			return config.logging.enabled;
 		}
@@ -93,7 +151,8 @@ public final class VulkanPerfMixinPlugin implements IMixinConfigPlugin {
 			return config.power.enabled;
 		}
 		if (mixinClassName.contains(".particles.")) {
-			return config.particles.enabled;
+			// Particle Core / AsyncParticles rewrite the same extract paths.
+			return config.particles.enabled && !modLoaded("particle_core") && !modLoaded("asyncparticles");
 		}
 		if (mixinClassName.contains(".culling.")) {
 			return config.culling.enabled;
