@@ -15,6 +15,7 @@
 		"logic.ItemEntityMixin",
 		"logic.MobAiMixin",
 		"logic.chunk.LevelChunkSectionRandomTickMixin",
+		"logic.FluidStateRandomTickMixin",
 		"chunks.ChunkGeneratorMixin",
 		"chunks.NoiseBasedChunkGeneratorMixin",
 		"chunks.IoWorkerMixin",

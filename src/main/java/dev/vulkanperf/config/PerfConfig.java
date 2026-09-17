@@ -155,6 +155,8 @@ public final class PerfConfig {
 		public boolean pathTypeCache = true;
 		/** Skip random-tick iteration for all-air sections. */
 		public boolean randomTickSkip = true;
+		/** Cache FluidState#isRandomlyTicking per fluid-state instance (constant per state, hot in random-tick loops). */
+		public boolean fluidRandomTickCache = true;
 	}
 
 	public static final class ChunksConfig {
@@ -326,5 +328,7 @@ public final class PerfConfig {
 		public boolean resourcePackConflictHandling = true;
 		/** GL backend only: print a stack trace with OpenGL debug callback messages (noisy). */
 		public boolean printAdditionalErrorInformation = false;
+		/** Per-element-list bounds union so GuiRenderState#hasIntersection short-circuits instead of scanning every element. */
+		public boolean guiIntersectionFastPath = true;
 	}
 }

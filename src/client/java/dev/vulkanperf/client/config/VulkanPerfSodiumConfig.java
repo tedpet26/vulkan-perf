@@ -114,7 +114,9 @@ public final class VulkanPerfSodiumConfig implements ConfigEntryPoint, StorageEv
 				.addOption(gatedFlag(b, "logic.pathTypeCache", "Path type cache", "Cache WalkNodeEvaluator#getPathTypeFromState per BlockState, shared across mobs. " + RESTART,
 					v -> PerfConfig.get().logic.pathTypeCache = v, () -> PerfConfig.get().logic.pathTypeCache, true, "module.logic"))
 				.addOption(gatedFlag(b, "logic.randomTickSkip", "Random tick skip", "Skip random-tick iteration for all-air sections. " + RESTART,
-					v -> PerfConfig.get().logic.randomTickSkip = v, () -> PerfConfig.get().logic.randomTickSkip, true, "module.logic")));
+					v -> PerfConfig.get().logic.randomTickSkip = v, () -> PerfConfig.get().logic.randomTickSkip, true, "module.logic"))
+				.addOption(gatedFlag(b, "logic.fluidRandomTickCache", "Fluid random-tick cache", "Cache isRandomlyTicking per fluid state so random-tick loops skip the virtual dispatch. " + RESTART,
+					v -> PerfConfig.get().logic.fluidRandomTickCache = v, () -> PerfConfig.get().logic.fluidRandomTickCache, true, "module.logic")));
 	}
 
 	private OptionPageBuilder chunksPage(ConfigBuilder b) {
@@ -246,7 +248,9 @@ public final class VulkanPerfSodiumConfig implements ConfigEntryPoint, StorageEv
 				.addOption(gatedFlag(b, "imfast.fastTextLookup", "Fast text lookup", "Cache the last resolved VertexConsumer per glyph renderer. " + RESTART,
 					v -> PerfConfig.get().imfast.fastTextLookup = v, () -> PerfConfig.get().imfast.fastTextLookup, true, "module.imfast"))
 				.addOption(gatedFlag(b, "imfast.skipTextTranslucencySorting", "Skip text sorting", "Disable vertex sorting for polygon-offset/see-through text render types. " + RESTART,
-					v -> PerfConfig.get().imfast.skipTextTranslucencySorting = v, () -> PerfConfig.get().imfast.skipTextTranslucencySorting, true, "module.imfast")))
+					v -> PerfConfig.get().imfast.skipTextTranslucencySorting = v, () -> PerfConfig.get().imfast.skipTextTranslucencySorting, true, "module.imfast"))
+				.addOption(gatedFlag(b, "imfast.guiIntersectionFastPath", "Fast GUI intersections", "Reject element/glyph bounds with a per-list union rectangle instead of scanning every element. " + RESTART,
+					v -> PerfConfig.get().imfast.guiIntersectionFastPath = v, () -> PerfConfig.get().imfast.guiIntersectionFastPath, true, "module.imfast")))
 			.addOptionGroup(group(b, "Atlases")
 				.addOption(gatedFlag(b, "imfast.mapAtlasGeneration", "Map atlases", "Pack map textures into shared GPU atlases instead of one texture per map. " + RESTART,
 					v -> PerfConfig.get().imfast.mapAtlasGeneration = v, () -> PerfConfig.get().imfast.mapAtlasGeneration, true, "module.imfast"))

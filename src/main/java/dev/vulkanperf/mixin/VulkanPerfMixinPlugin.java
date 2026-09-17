@@ -38,6 +38,7 @@ public final class VulkanPerfMixinPlugin implements IMixinConfigPlugin {
 				case "ItemEntityMixin" -> config.logic.itemMerge;
 				case "MobAiMixin" -> config.logic.mobAiSkip;
 				case "LevelChunkSectionRandomTickMixin" -> config.logic.randomTickSkip;
+				case "FluidStateRandomTickMixin" -> config.logic.fluidRandomTickCache;
 				default -> true;
 			};
 		}
@@ -119,6 +120,7 @@ public final class VulkanPerfMixinPlugin implements IMixinConfigPlugin {
 			boolean iris = net.fabricmc.loader.api.FabricLoader.getInstance().isModLoaded("iris");
 			return switch (name) {
 				case "RenderTypeGroupReorderMixin", "ScissorStateMixin" -> config.imfast.enhancedBatching;
+				case "GuiRenderStateIntersectionMixin", "GuiRenderStateNodeMixin" -> config.imfast.guiIntersectionFastPath;
 				case "MapRendererMixin", "MapTextureManagerMixin", "MapInstanceMixin", "GuiGraphicsExtractorMapMixin", "MapRenderStateMixin" ->
 					config.imfast.mapAtlasGeneration;
 				case "FontTextureMixin" -> config.imfast.fontAtlasResizing;

@@ -50,6 +50,8 @@
 		"imfast.FontTextureMixin",
 		"imfast.TextGlyphLookupMixin",
 		"imfast.RenderTypesTextSortMixin",
+		"imfast.GuiRenderStateIntersectionMixin",
+		"imfast.GuiRenderStateNodeMixin",
 		"imfast.GuiRendererItemBatchMixin",
 		"imfast.GuiItemAtlasAnimatedMixin",
 		"imfast.GlCommandEncoderFramebufferMixin",

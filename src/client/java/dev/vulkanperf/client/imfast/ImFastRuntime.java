@@ -138,6 +138,10 @@ public final class ImFastRuntime {
 		return enabled() && PerfConfig.get().imfast.skipTextTranslucencySorting;
 	}
 
+	public static boolean guiIntersectionFastPath() {
+		return enabled() && PerfConfig.get().imfast.guiIntersectionFastPath;
+	}
+
 	public static boolean batchAnimatedItemUpdates() {
 		return enabled() && PerfConfig.get().imfast.batchAnimatedItemUpdates;
 	}

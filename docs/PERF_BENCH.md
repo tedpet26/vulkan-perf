@@ -53,3 +53,45 @@ client with the upstream mods installed (Lithium/Entity Culling/C2ME on 26.3);
 the offline environment used for development has no display and no second mod
 stack. Until a human runs the matrix, the only recorded numbers are the build
 status and the microbench above — do not cite FPS/TPS figures from this file.
+
+## Spark standalone-agent profiles (2026-09-16)
+
+Since no spark build targets 26.3, the standalone agent (spark-1.10.185,
+`-javaagent:spark-...-standalone-agent.jar=port=2223`) was attached to the
+production 26.3 Prism instance and driven over its SSH interface. Identical
+workload both runs: fresh superflat world (seed `vulkanperf`), forceload of
+256 chunks, 120 AI villagers + 40 armor stands, camera panning, F3 overlay on.
+
+- Clean run: https://spark.lucko.me/iY3yyNYNkk
+- Warm-up run (natural spawning, no bench entities): https://spark.lucko.me/eSoUJvxoYO
+
+Recorded observations (client: Ryzen 7 5800X, RX 7900 XTX, Vulkan 1.4.344,
+maxFps 260, vsync off, RD 12):
+
+- Render thread ~1.2k FPS focused; biggest *active* cost after idle-park is
+  the GUI/text pipeline: `GuiRenderer.addElementToMesh`,
+  `GuiRenderState.hasIntersection`, `Font$PreparedTextBuilder`,
+  `BakedSheetGlyph drawFast`, ICU Bidi — together ~10-15% of busy time.
+  `hasIntersection` alone scans every element of a node list per added glyph.
+- Server thread 75-88% parked (client ticks 6-16 ms of the 50 ms budget);
+  hottest self-times: villager `Brain.startEachNonRunningBehavior` streams,
+  `FluidState.isRandomlyTicking`, `BlockCollisions`, `PalettedContainer.get`.
+- vulkanperf worker pools (chunkio/serialize/worldgen) fully idle on a flat
+  world — no regression risk there for this workload.
+- One hard crash observed after the profile finished, sitting unfocused on a
+  second GPU context: `IllegalStateException: 5s timeout reached when waiting
+  for VK semaphore` (driver-level; not reproduced under normal play).
+
+Changes driven by these profiles (same day): `imfast.guiIntersectionFastPath`
+(per-list bounds union so `hasIntersection` rejects in O(1) when the new rect
+cannot touch anything in the list) and `logic.fluidRandomTickCache` (cache
+`FluidState#isRandomlyTicking` per state instance). Both default on, gated in
+the mixin plugin, and toggleable in the Sodium-style config pages.
+
+A matching spark profile of the 26.2 Prism instance (full individual-mod
+stack: Sodium/Lithium/EntityCulling/FerriteCore/ImmediatelyFast/C2ME, plus
+the Hypixel client mods) was attempted twice but the JVM died mid-profile
+both times with `g1HeapRegionManager.cpp:55` internal errors (JDK 25.0.1);
+that instance directory already holds several pre-existing `hs_err_pid*`
+files from normal play, so the machine/JDK combination is crash-prone
+independent of this mod. No uploaded 26.2 profile exists yet.
