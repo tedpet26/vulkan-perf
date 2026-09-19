@@ -15,7 +15,7 @@ import java.nio.file.Path;
 public final class PerfConfig {
 	private static final Logger LOGGER = LoggerFactory.getLogger("vulkanperf");
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-	private static final int CONFIG_VERSION = 6;
+	private static final int CONFIG_VERSION = 7;
 	private static PerfConfig instance = new PerfConfig();
 
 	public int configVersion = 0;
@@ -103,6 +103,14 @@ public final class PerfConfig {
 			// raised) — required so the PacketFixer break always ships a working
 			// replacement.
 			this.packets.enabled = true;
+		}
+		if (this.configVersion < 7) {
+			// v7: enhanced draw batching produces render-pass pipeline mismatches with
+			// resource-pack-modified render types ("Render pass color attachment count
+			// must match pipeline color target state count"). Disabled by default until
+			// the widened consolidation can be validated against custom pipelines;
+			// re-enable via Video Settings > vulkan-perf > imfast if desired.
+			this.imfast.enhancedBatching = false;
 		}
 		if (this.configVersion < 6) {
 			// v6: 26.3 raised the vanilla decompressed cap in CompressionDecoder
@@ -358,8 +366,9 @@ public final class PerfConfig {
 	public static final class ImFastConfig {
 		public boolean enabled = true;
 
-		/** Force {@code RenderTypeFeatureRenderer$Group} to always allow draw-call reordering/merging. */
-		public boolean enhancedBatching = true;
+		/** Force {@code RenderTypeFeatureRenderer$Group} to always allow draw-call reordering/merging.
+		 * Off by default: crashes the render pass with resource-pack-modified render types. */
+		public boolean enhancedBatching = false;
 		/** Pack map textures into shared GPU atlases instead of one texture per map id. */
 		public boolean mapAtlasGeneration = true;
 		/** Edge length of each packed map atlas sheet (power of two). */
